@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<camera name="img-01.jpg">
+    <calibration cameraMaker="Apple" cameraModel="iPhone 15" lense="6.0 mm - Lens iPhone 15 back dual wide camera 5.96mm f/1.6" w="5712" h="4284" fx="4275.18440281" fy="4275.18440281" cx="2901.81288923" cy="2158.12405281" k1="0" k2="0" p1="0" p2="0" k3="0" skew="0" name=""/>
+    <extrinsics>
+        <rotation rowMajor="1">0.0116593245947 -0.58176503228 -0.813273328817 -0.996861349361 -0.0704537983764 0.0361069583842 -0.0783039609434 0.810299765217 -0.580760518794</rotation>
+        <translation>11.0576567859 -1.25916616832 82.5116087095</translation>
+    </extrinsics>
+</camera>
