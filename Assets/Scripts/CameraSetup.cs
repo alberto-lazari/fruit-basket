@@ -15,19 +15,19 @@ public class CameraSetup : MonoBehaviour
         Both = 0x11,
     }
 
-    [SerializeField] private Camera m_MainCamera;
     [SerializeField] private UnityEngine.GameObject m_ImageObject;
     [SerializeField] private LensShiftIgnore m_IgnoreLensShift = LensShiftIgnore.None;
 
+    private Camera m_Camera;
     private float m_ImageRatio;
     private CameraParameters.Intrinsics m_IntrinsicParameters;
 
     private void Start()
     {
-        if (m_MainCamera == null) m_MainCamera = Camera.main;
+        m_Camera = GetComponent<Camera>();
         if (m_ImageObject == null)
         {
-            m_ImageObject = m_MainCamera
+            m_ImageObject = m_Camera
                 .transform.Find("Canvas")
                 .transform.Find("Image")
                 .gameObject;
@@ -77,10 +77,10 @@ public class CameraSetup : MonoBehaviour
         float xmpRatio = (float)imageWidth / imageHeight;
         if (Mathf.Abs(m_ImageRatio - xmpRatio) > 0.01f)
         {
-            m_MainCamera.transform.Rotate(0f, 0f, 90f, Space.Self);
-            m_MainCamera.sensorSize = new Vector2(
-                m_MainCamera.sensorSize.y,
-                m_MainCamera.sensorSize.x
+            m_Camera.transform.Rotate(0f, 0f, 90f, Space.Self);
+            m_Camera.sensorSize = new Vector2(
+                m_Camera.sensorSize.y,
+                m_Camera.sensorSize.x
             );
         }
         FixProportions();
@@ -112,9 +112,9 @@ public class CameraSetup : MonoBehaviour
         }
 
         // Apply parameters
-        m_MainCamera.focalLength = m_IntrinsicParameters.focalLength;
-        m_MainCamera.sensorSize = m_IntrinsicParameters.sensorSize;
-        m_MainCamera.lensShift = m_IntrinsicParameters.lensShift;
+        m_Camera.focalLength = m_IntrinsicParameters.focalLength;
+        m_Camera.sensorSize = m_IntrinsicParameters.sensorSize;
+        m_Camera.lensShift = m_IntrinsicParameters.lensShift;
     }
 
     private void SetExtrinsicParameters(float[,] i_RotationMatrix, Vector3 i_Translation)
@@ -122,8 +122,8 @@ public class CameraSetup : MonoBehaviour
         CameraParameters.Extrinsics parameters = CameraParameters.ComputeExtrinsics(
             i_RotationMatrix, i_Translation
         );
-        m_MainCamera.transform.position = parameters.position;
-        m_MainCamera.transform.rotation = Quaternion.Euler(parameters.rotation);
+        m_Camera.transform.position = parameters.position;
+        m_Camera.transform.rotation = Quaternion.Euler(parameters.rotation);
     }
 
     private void FixProportions()
@@ -132,13 +132,13 @@ public class CameraSetup : MonoBehaviour
         Vector2 baseSensorSize = m_IntrinsicParameters.sensorSize;
 
         // Scale sensor matching image width
-        m_MainCamera.sensorSize = new Vector2(screenRatio, 1f) * baseSensorSize.y;
+        m_Camera.sensorSize = new Vector2(screenRatio, 1f) * baseSensorSize.y;
 
         // Scale image
         m_ImageObject.GetComponent<RectTransform>().localScale = Vector3.one
             * (m_ImageRatio / screenRatio);
 
         // Scale focal lenght accordingly
-        m_MainCamera.focalLength = m_IntrinsicParameters.focalLength * m_ImageRatio;
+        m_Camera.focalLength = m_IntrinsicParameters.focalLength * m_ImageRatio;
     }
 }
