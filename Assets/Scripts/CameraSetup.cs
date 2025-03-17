@@ -15,7 +15,7 @@ public class CameraSetup : MonoBehaviour
         Both = 0x11,
     }
 
-    [SerializeField] private UnityEngine.GameObject m_ImageObject;
+    [SerializeField] private GameObject m_ImageObject;
     [SerializeField] private LensShiftIgnore m_IgnoreLensShift = LensShiftIgnore.None;
 
     private Camera m_Camera;
