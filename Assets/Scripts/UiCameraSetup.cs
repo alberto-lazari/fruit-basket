@@ -37,6 +37,8 @@ public class UiCameraSetup : MonoBehaviour
         m_CurrentImageIndex = (m_CurrentImageIndex + m_BackgroundImages.Count - 1)
             % m_BackgroundImages.Count;
 
+        if (m_UiCamera == null || m_3dCamera == null) return;
+
         // Setup cameras for the new image
         Setup(m_UiCamera);
         Setup(m_3dCamera);
@@ -47,6 +49,8 @@ public class UiCameraSetup : MonoBehaviour
         // Update current image
         m_CurrentImageIndex = (m_CurrentImageIndex + 1)
             % m_BackgroundImages.Count;
+
+        if (m_UiCamera == null || m_3dCamera == null) return;
 
         // Setup cameras for the new image
         Setup(m_UiCamera);
