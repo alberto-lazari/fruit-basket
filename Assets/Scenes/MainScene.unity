@@ -1247,6 +1247,11 @@ MonoBehaviour:
   m_BackgroundImages:
   - {fileID: 21300000, guid: 6cf85b0facf9a4779a782c616f29d671, type: 3}
   - {fileID: 21300000, guid: 380d3e3e3eb474d69ba7e8e7a8e1c27e, type: 3}
+  - {fileID: 21300000, guid: f009f2d142ed04d6cb891c5c7aef63d5, type: 3}
+  - {fileID: 21300000, guid: 94d791e2a6c694ed9bc982258d876005, type: 3}
+  - {fileID: 21300000, guid: ee4c9edac724548dc8783910314d39a5, type: 3}
+  - {fileID: 21300000, guid: eda1c0b9bee8d48faaf4c67907348e77, type: 3}
+  - {fileID: 21300000, guid: ad100324897ea44f290c1a959aa3cebd, type: 3}
   m_IgnoreLensShiftX: 1
   m_IgnoreLensShiftY: 0
 --- !u!1 &1836399804

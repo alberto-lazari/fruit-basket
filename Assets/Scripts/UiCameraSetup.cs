@@ -29,14 +29,28 @@ public class UiCameraSetup : MonoBehaviour
     private RectTransform? m_ImageTransform;
     private float? m_ImageRatio;
     private CameraParameters.Intrinsics? m_IntrinsicParameters;
+    private int m_CurrentImageIndex = 0;
 
     public void MoveLeft()
     {
+        // Update current image
+        m_CurrentImageIndex = (m_CurrentImageIndex + m_BackgroundImages.Count - 1)
+            % m_BackgroundImages.Count;
+
+        // Setup cameras for the new image
+        Setup(m_UiCamera);
+        Setup(m_3dCamera);
     }
 
     public void MoveRight()
     {
-        Debug.Log("Camera Right");
+        // Update current image
+        m_CurrentImageIndex = (m_CurrentImageIndex + 1)
+            % m_BackgroundImages.Count;
+
+        // Setup cameras for the new image
+        Setup(m_UiCamera);
+        Setup(m_3dCamera);
     }
 
     private void Start()
@@ -67,12 +81,9 @@ public class UiCameraSetup : MonoBehaviour
             return;
         }
 
-        // Start with first background image by default (the central one)
-        Sprite imageSprite = m_BackgroundImages[0];
-
         // Setup both cameras
-        Setup(m_UiCamera, imageSprite);
-        Setup(m_3dCamera, imageSprite);
+        Setup(m_UiCamera);
+        Setup(m_3dCamera);
 
         InitCameraShader();
     }
@@ -86,16 +97,17 @@ public class UiCameraSetup : MonoBehaviour
         m_UiCameraMaterial.mainTexture = m_UiCamera.targetTexture;
     }
 
-    private void Setup(in Camera i_Camera, in Sprite i_ImageSprite)
+    private void Setup(in Camera i_Camera)
     {
-        if (m_ImageComponent != null) m_ImageComponent.sprite = i_ImageSprite;
+        Sprite imageSprite = m_BackgroundImages[m_CurrentImageIndex];
+        if (m_ImageComponent != null) m_ImageComponent.sprite = imageSprite;
+
         if (!Directory.Exists(CameraParametersDirectory))
         {
             Debug.LogError($"Directory {CameraParametersDirectory} does not exist.");
             return;
         }
-
-        string imageName = i_ImageSprite.name;
+        string imageName = imageSprite.name;
         string xmpFilePath = Directory.EnumerateFiles(CameraParametersDirectory, "*.xmp")
             .Where(file => Regex.IsMatch(
                 Path.GetFileNameWithoutExtension(file),
@@ -103,7 +115,7 @@ public class UiCameraSetup : MonoBehaviour
             )
             .First();
 
-        m_ImageRatio = (float)i_ImageSprite.texture.width / i_ImageSprite.texture.height;
+        m_ImageRatio = (float)imageSprite.texture.width / imageSprite.texture.height;
 
         XElement cameraElement = XDocument
             .Parse(File.ReadAllText(xmpFilePath))
