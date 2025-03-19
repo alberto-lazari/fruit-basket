@@ -10,15 +10,6 @@ public class FruitThrower : MonoBehaviour
 
     private GameObject m_CurrentFruit;
 
-    public void AdjustFruitPosition()
-    {
-        GameObject camera = Camera.main.gameObject;
-        transform.position = camera.transform.position;
-        transform.rotation = camera.transform.rotation;
-        if (m_CurrentFruit != null)
-            m_CurrentFruit.transform.position = FruitPosition();
-    }
-
     private void Start()
     {
         GameObject camera = Camera.main.gameObject;
@@ -28,9 +19,26 @@ public class FruitThrower : MonoBehaviour
         SpawnFruit();
     }
 
+    private void Update()
+    {
+        AdjustFruitPosition();
+    }
+
     private Vector3 FruitPosition()
     {
         return transform.position + transform.forward * 10;
+    }
+
+    private void AdjustFruitPosition()
+    {
+        if (m_CurrentFruit == null) return;
+
+        GameObject camera = Camera.main.gameObject;
+        if (m_CurrentFruit.transform.position == camera.transform.position) return;
+
+        transform.position = camera.transform.position;
+        transform.rotation = camera.transform.rotation;
+        m_CurrentFruit.transform.position = FruitPosition();
     }
 
     private void SpawnFruit()

@@ -12,16 +12,8 @@ public class GameController : MonoBehaviour
     {
         m_InputActions = new InputActions();
         m_InputActions.Game.Throw.performed += ctx => m_Thrower.ThrowFruit();
-        m_InputActions.Game.MoveLeft.performed += ctx =>
-        {
-            m_CameraSetup.MoveLeft();
-            m_Thrower.AdjustFruitPosition();
-        };
-        m_InputActions.Game.MoveRight.performed += ctx =>
-        {
-            m_CameraSetup.MoveRight();
-            m_Thrower.AdjustFruitPosition();
-        };
+        m_InputActions.Game.MoveLeft.performed += ctx => m_CameraSetup.MoveLeft();
+        m_InputActions.Game.MoveRight.performed += ctx => m_CameraSetup.MoveRight();
     }
 
     private void OnEnable()
