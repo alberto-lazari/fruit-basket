@@ -10,6 +10,15 @@ public class FruitThrower : MonoBehaviour
 
     private GameObject m_CurrentFruit;
 
+    public void AdjustFruitPosition()
+    {
+        GameObject camera = Camera.main.gameObject;
+        transform.position = camera.transform.position;
+        transform.rotation = camera.transform.rotation;
+        if (m_CurrentFruit != null)
+            m_CurrentFruit.transform.position = FruitPosition();
+    }
+
     private void Start()
     {
         GameObject camera = Camera.main.gameObject;
@@ -19,12 +28,17 @@ public class FruitThrower : MonoBehaviour
         SpawnFruit();
     }
 
+    private Vector3 FruitPosition()
+    {
+        return transform.position + transform.forward * 10;
+    }
+
     private void SpawnFruit()
     {
         GameObject fruit = Random.Range(0, 5) == 0 ? m_Banana : m_Apple;
         m_CurrentFruit = Instantiate<GameObject>(
             fruit,
-            transform.position + transform.forward * 10,
+            FruitPosition(),
             fruit.transform.rotation
         );
         m_CurrentFruit.GetComponent<Rigidbody>().useGravity = false;
