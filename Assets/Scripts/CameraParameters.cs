@@ -47,11 +47,12 @@ public class CameraParameters
 
 
     public static Intrinsics ComputeIntrinsics(int i_ImageWidth, int i_ImageHeight,
-            Vector2 i_FocalLengthPx, Vector2 i_PrincipalPoint, float i_SensorX = 35f)
+            Vector2 i_FocalLengthPx, Vector2 i_PrincipalPoint, float? i_SensorX)
     {
-        float focalLength = i_FocalLengthPx.x * (i_SensorX / i_ImageWidth);
+        float sensorX = i_SensorX ?? 35f;
+        float focalLength = i_FocalLengthPx.x * (sensorX / i_ImageWidth);
         Vector2 sensorSize = new Vector2(
-            i_SensorX,
+            sensorX,
             focalLength * (i_ImageHeight / i_FocalLengthPx.y)
         );
         Vector2 lensShift = new Vector2(
