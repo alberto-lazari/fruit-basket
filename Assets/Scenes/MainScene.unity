@@ -795,6 +795,53 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &545483632
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 545483634}
+  - component: {fileID: 545483635}
+  m_Layer: 0
+  m_Name: GameController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &545483634
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 545483632}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.700349, y: 3.2823868, z: 47.307014}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &545483635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 545483632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0c2bf65a216c4284b2f70c2d45e21be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Thrower: {fileID: 1836399808}
+  m_3dCameraSetup: {fileID: 2036659891}
+  m_UiCameraSetup: {fileID: 1824769361}
 --- !u!1 &666175294
 GameObject:
   m_ObjectHideFlags: 0
@@ -806,6 +853,7 @@ GameObject:
   - component: {fileID: 666175297}
   - component: {fileID: 666175296}
   - component: {fileID: 666175295}
+  - component: {fileID: 666175298}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -874,6 +922,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &666175298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 666175294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Game
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1 &683255810
 GameObject:
   m_ObjectHideFlags: 0
@@ -1036,7 +1114,7 @@ GameObject:
   - component: {fileID: 1824769364}
   m_Layer: 0
   m_Name: UI Camera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1098,7 +1176,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ImageObject: {fileID: 683255810}
-  m_IgnoreLensShift: 1
+  m_IgnoreLensShiftX: 1
+  m_IgnoreLensShiftY: 0
 --- !u!20 &1824769362
 Camera:
   m_ObjectHideFlags: 0
@@ -1147,7 +1226,7 @@ Camera:
   m_AllowMSAA: 1
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
+  m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
 --- !u!4 &1824769363
@@ -1256,8 +1335,8 @@ GameObject:
   - component: {fileID: 2036659891}
   - component: {fileID: 2036659890}
   m_Layer: 0
-  m_Name: MainCamera
-  m_TagString: MainCamera
+  m_Name: 3D Camera
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1319,7 +1398,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ImageObject: {fileID: 683255810}
-  m_IgnoreLensShift: 1
+  m_IgnoreLensShiftX: 1
+  m_IgnoreLensShiftY: 0
 --- !u!20 &2036659892
 Camera:
   m_ObjectHideFlags: 0
@@ -1393,6 +1473,7 @@ SceneRoots:
   - {fileID: 2036659893}
   - {fileID: 1824769363}
   - {fileID: 410087041}
+  - {fileID: 545483634}
   - {fileID: 666175297}
   - {fileID: 1836399806}
   - {fileID: 62641684}

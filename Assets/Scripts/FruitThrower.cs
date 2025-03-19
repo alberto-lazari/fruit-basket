@@ -19,17 +19,23 @@ public class FruitThrower : MonoBehaviour
         SpawnFruit();
     }
 
-    private void Update()
+    private void SpawnFruit()
     {
-        if (m_CurrentFruit != null && Input.GetKeyDown(KeyCode.W))
-        {
-            ThrowFruit();
-            Invoke(nameof(SpawnFruit), m_SpawnTime);
-        }
+        GameObject fruit = Random.Range(0, 5) == 0 ? m_Banana : m_Apple;
+        m_CurrentFruit = Instantiate<GameObject>(
+            fruit,
+            transform.position + transform.forward * 10,
+            fruit.transform.rotation
+        );
+        m_CurrentFruit.GetComponent<Rigidbody>().useGravity = false;
+
+        m_CurrentFruit.SetActive(true);
     }
 
-    private void ThrowFruit()
+    public void ThrowFruit()
     {
+        if (m_CurrentFruit == null) return;
+
         Vector3 deviation = new Vector3(
             Random.Range(-.5f, .5f),
             Random.Range(.5f, 1.5f),
@@ -47,18 +53,6 @@ public class FruitThrower : MonoBehaviour
         );
 
         m_CurrentFruit = null;
-    }
-
-    private void SpawnFruit()
-    {
-        GameObject fruit = Random.Range(0, 5) == 0 ? m_Banana : m_Apple;
-        m_CurrentFruit = Instantiate<GameObject>(
-            fruit,
-            transform.position + transform.forward * 10,
-            fruit.transform.rotation
-        );
-        m_CurrentFruit.GetComponent<Rigidbody>().useGravity = false;
-
-        m_CurrentFruit.SetActive(true);
+        Invoke(nameof(SpawnFruit), m_SpawnTime);
     }
 }

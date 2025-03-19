@@ -7,31 +7,48 @@ using UnityEngine.UI;
 
 public class CameraSetup : MonoBehaviour
 {
-    public enum LensShiftIgnore
-    {
-        None = 0x00,
-        X    = 0x01,
-        Y    = 0x10,
-        Both = 0x11,
-    }
-
     [SerializeField] private GameObject m_ImageObject;
-    [SerializeField] private LensShiftIgnore m_IgnoreLensShift = LensShiftIgnore.None;
+    [SerializeField] private bool m_IgnoreLensShiftX = false;
+    [SerializeField] private bool m_IgnoreLensShiftY = false;
 
     private Camera m_Camera;
     private float m_ImageRatio;
     private CameraParameters.Intrinsics m_IntrinsicParameters;
+
+    public void MoveLeft()
+    {
+        Debug.Log("Camera Left");
+    }
+
+    public void MoveRight()
+    {
+        Debug.Log("Camera Right");
+    }
 
     private void Start()
     {
         m_Camera = GetComponent<Camera>();
         if (m_ImageObject == null)
         {
-            m_ImageObject = m_Camera
+            m_ImageObject = Camera.main
                 .transform.Find("Canvas")
                 .transform.Find("Image")
                 .gameObject;
         }
+
+        Setup();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            FixProportions();
+        }
+    }
+
+    private void Setup()
+    {
         Sprite sprite = m_ImageObject.GetComponent<Image>().sprite;
         string filePath = UnityEditor.AssetDatabase.GetAssetPath(sprite) + ".xmp";
         m_ImageRatio = (float)sprite.texture.width / sprite.texture.height;
@@ -77,6 +94,8 @@ public class CameraSetup : MonoBehaviour
         float xmpRatio = (float)imageWidth / imageHeight;
         if (Mathf.Abs(m_ImageRatio - xmpRatio) > 0.01f)
         {
+            // Ratios differ => image is vertical
+            // Zephyr processed it by rotating -90 deg
             m_Camera.transform.Rotate(0f, 0f, 90f, Space.Self);
             m_Camera.sensorSize = new Vector2(
                 m_Camera.sensorSize.y,
@@ -84,14 +103,6 @@ public class CameraSetup : MonoBehaviour
             );
         }
         FixProportions();
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            FixProportions();
-        }
     }
 
     private void SetIntrinsicParameters(
@@ -102,14 +113,8 @@ public class CameraSetup : MonoBehaviour
             i_ImageWidth, i_ImageHeight, i_FocalLengthPx, i_PrincipalPoint
         );
 
-        if (((int)m_IgnoreLensShift & (int)LensShiftIgnore.X) != 0)
-        {
-            m_IntrinsicParameters.lensShift.x = 0f;
-        }
-        if (((int)m_IgnoreLensShift & (int)LensShiftIgnore.Y) != 0)
-        {
-            m_IntrinsicParameters.lensShift.y = 0f;
-        }
+        if (m_IgnoreLensShiftX) m_IntrinsicParameters.lensShift.x = 0f;
+        if (m_IgnoreLensShiftY) m_IntrinsicParameters.lensShift.y = 0f;
 
         // Apply parameters
         m_Camera.focalLength = m_IntrinsicParameters.focalLength;
