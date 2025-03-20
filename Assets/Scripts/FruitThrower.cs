@@ -6,9 +6,13 @@ public class FruitThrower : MonoBehaviour
     [SerializeField] private GameObject m_Banana;
     [SerializeField] private float m_Force = 25f;
     [SerializeField] private float m_Torque = 2f;
+    [SerializeField] private float m_SpawnDistance = 20f;
     [SerializeField] private float m_SpawnTime = 2f;
 
     private GameObject m_CurrentFruit;
+    private Vector3 m_HitOffset;
+    private bool m_IsDragging = false;
+    private Plane m_DragPlane;
 
     private void Start()
     {
@@ -21,12 +25,12 @@ public class FruitThrower : MonoBehaviour
 
     private void Update()
     {
-        AdjustFruitPosition();
+        if (!m_IsDragging) AdjustFruitPosition();
     }
 
     private Vector3 FruitPosition()
     {
-        return transform.position + transform.forward * 10;
+        return transform.position + transform.forward * m_SpawnDistance;
     }
 
     private void AdjustFruitPosition()
@@ -54,14 +58,57 @@ public class FruitThrower : MonoBehaviour
         m_CurrentFruit.SetActive(true);
     }
 
-    public void ThrowFruit(Vector2 i_Gesture)
+
+    /**
+     * Start dragging by recording the offset.
+     */
+    public bool OnFruitGrab(GameObject fruit, Vector3 grabPoint)
+    {
+        if (m_IsDragging || m_CurrentFruit == null || fruit != m_CurrentFruit)
+        {
+            return m_IsDragging = false;
+        }
+
+        // Store the offset in local space
+        m_HitOffset = transform.InverseTransformPoint(grabPoint);
+
+        // Define a plane at the same Z position of the thrower
+        m_DragPlane = new Plane(transform.forward, m_CurrentFruit.transform.position);
+        return m_IsDragging = true;
+    }
+
+    /**
+     * Update position to keep the hit point aligned with the cursor.
+     */
+    public void OnFruitDrag()
+    {
+        if (!m_IsDragging || m_CurrentFruit == null) return;
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        // Project onto the dragging plane
+        if (m_DragPlane.Raycast(ray, out float enter))
+        {
+            Vector3 worldPoint = ray.GetPoint(enter);
+            Vector3 newLocalPoint = transform.InverseTransformPoint(worldPoint);
+
+            // Keep Z unchanged and apply the original offset
+            newLocalPoint.z = m_HitOffset.z;
+            m_CurrentFruit.transform.position = transform.TransformPoint(newLocalPoint);
+        }
+    }
+
+    /**
+     * Throw the current fruit with a force based on the gesture.
+     */
+    public void OnFruitRelease(Vector2 gesture)
     {
         if (m_CurrentFruit == null) return;
 
-        Debug.Log(i_Gesture);
+        Debug.Log(gesture);
         Vector3 deviation = new Vector3(
-            i_Gesture.x,
-            i_Gesture.y,
+            gesture.x,
+            gesture.y,
             1
         );
         Rigidbody rb = m_CurrentFruit.GetComponent<Rigidbody>();
@@ -75,7 +122,11 @@ public class FruitThrower : MonoBehaviour
             ForceMode.Impulse
         );
 
+        // Detach the fruit from gesture
+        m_IsDragging = false;
         m_CurrentFruit = null;
+
+        // Schedule a new fruit spawn
         Invoke(nameof(SpawnFruit), m_SpawnTime);
     }
 }

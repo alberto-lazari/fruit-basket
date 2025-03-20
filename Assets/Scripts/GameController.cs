@@ -7,10 +7,12 @@ public class GameController : MonoBehaviour
 {
     [SerializeField] private FruitThrower m_Thrower;
     [SerializeField] private UiCameraSetup m_CameraSetup;
-
-    private List<Vector2> m_ThrowGesturePoints = new();
+    [SerializeField] private float m_CameraGestureDeadZone = 100f;
 
     private InputActions m_InputActions;
+    private List<Vector2> m_GesturePoints = new();
+    private bool m_IsDraggingFruit = false;
+
 
     private void Awake()
     {
@@ -21,13 +23,19 @@ public class GameController : MonoBehaviour
 
     private void Start()
     {
-        if (m_Thrower == null) Debug.LogError("Thrower is not assigned");
-        if (m_CameraSetup == null) Debug.LogError("Camera is not assigned");
+        if (m_Thrower == null)
+        {
+            Debug.LogError("Thrower is not assigned");
+        }
+        if (m_CameraSetup == null)
+        {
+            Debug.LogError("Camera is not assigned");
+        }
     }
 
     private void Update()
     {
-        TrackThrowGesture();
+        if (IsMouseGestureActive()) TrackGesture();
     }
 
     private void OnEnable()
@@ -40,27 +48,51 @@ public class GameController : MonoBehaviour
         m_InputActions.Disable();
     }
 
-    private void TrackThrowGesture()
+    private static bool IsMouseGestureActive()
     {
-        if (!( Input.GetMouseButtonDown(0)
+        return Input.GetMouseButtonDown(0)
             || Input.GetMouseButton(0)
-            || Input.GetMouseButtonUp(0) )
-        ) return;
-
-        m_ThrowGesturePoints.Add(Input.mousePosition);
-
-        if (Input.GetMouseButtonDown(0)) m_ThrowGesturePoints.Clear();
-        else if (Input.GetMouseButtonUp(0)) ProcessThrowGesture();
+            || Input.GetMouseButtonUp(0);
     }
 
-    private void ProcessThrowGesture()
+    private void TrackGesture()
     {
-        if (m_ThrowGesturePoints.Count < 2) return;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Input.GetMouseButtonDown(0))
+        {
+            // Perform raycast to check if the mouse is over a fruit
+            if (Physics.Raycast(ray, out RaycastHit hit) && hit.collider.CompareTag("Fruit"))
+            {
+                m_IsDraggingFruit = m_Thrower.OnFruitGrab(hit.collider.gameObject, hit.point);
+            }
 
-        Vector2 last = m_ThrowGesturePoints[m_ThrowGesturePoints.Count - 1];
-        Vector2 first = m_ThrowGesturePoints[0];
+            // Clear previous gesture points
+            m_GesturePoints.Clear();
+        }
+
+        // Track mouse movement
+        Vector2 point = Input.mousePosition;
+        m_GesturePoints.Add(point);
+        if (m_IsDraggingFruit) m_Thrower.OnFruitDrag();
+
+        if (Input.GetMouseButtonUp(0)) ProcessGesture();
+    }
+
+    private void ProcessGesture()
+    {
+        if (m_GesturePoints.Count < 2) return;
+
+        Vector2 last = m_GesturePoints[m_GesturePoints.Count - 1];
+        Vector2 first = m_GesturePoints[0];
         Vector2 gesture = last - first;
 
-        m_Thrower.ThrowFruit(gesture);
+        if (m_IsDraggingFruit)
+        {
+            m_Thrower.OnFruitRelease(gesture);
+            m_IsDraggingFruit = false;
+        }
+        // Camera movement gestures
+        else if (gesture.x > m_CameraGestureDeadZone) m_CameraSetup.MoveLeft();
+        else if (gesture.x < -m_CameraGestureDeadZone) m_CameraSetup.MoveRight();
     }
 }

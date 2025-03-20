@@ -12,7 +12,7 @@ using UnityEngine.UI;
 
 public class UiCameraSetup : MonoBehaviour
 {
-    private static readonly string CameraParametersDirectory = Path
+    private static readonly string k_CameraParametersDirectory = Path
         .Combine(Application.streamingAssetsPath, "CameraParameters");
 
     [SerializeField] private Camera? m_UiCamera;
@@ -106,13 +106,13 @@ public class UiCameraSetup : MonoBehaviour
         Sprite imageSprite = m_BackgroundImages[m_CurrentImageIndex];
         if (m_ImageComponent != null) m_ImageComponent.sprite = imageSprite;
 
-        if (!Directory.Exists(CameraParametersDirectory))
+        if (!Directory.Exists(k_CameraParametersDirectory))
         {
-            Debug.LogError($"Directory {CameraParametersDirectory} does not exist.");
+            Debug.LogError($"Directory {k_CameraParametersDirectory} does not exist.");
             return;
         }
         string imageName = imageSprite.name;
-        string xmpFilePath = Directory.EnumerateFiles(CameraParametersDirectory, "*.xmp")
+        string xmpFilePath = Directory.EnumerateFiles(k_CameraParametersDirectory, "*.xmp")
             .Where(file => Regex.IsMatch(
                 Path.GetFileNameWithoutExtension(file),
                 $"^{Regex.Escape(imageName)}")

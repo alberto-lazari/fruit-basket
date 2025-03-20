@@ -13,8 +13,14 @@ public class BasketFruitCounter : MonoBehaviour
 
     private void Start()
     {
-        if (m_Collider == null) m_Collider = GetComponent<SphereCollider>();
-        if (m_CounterText == null) Debug.LogError("UI Counter text is not assigned");
+        if (m_Collider == null)
+        {
+            m_Collider = GetComponent<SphereCollider>();
+        }
+        if (m_CounterText == null)
+        {
+            Debug.LogError("UI Counter text is not assigned");
+        }
     }
 
     private void Update()

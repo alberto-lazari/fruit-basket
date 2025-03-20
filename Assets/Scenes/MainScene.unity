@@ -977,6 +977,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Thrower: {fileID: 1836399808}
   m_CameraSetup: {fileID: 1824769364}
+  m_CameraGestureDeadZone: 100
 --- !u!1 &666175294
 GameObject:
   m_ObjectHideFlags: 0
