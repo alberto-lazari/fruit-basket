@@ -20,7 +20,7 @@ public class UiCameraSetup : MonoBehaviour
 
     [SerializeField] private Material? m_UiCameraMaterial;
     [SerializeField] private GameObject? m_ImageObject;
-    [SerializeField] private List<Sprite> m_BackgroundImages = new List<Sprite>();
+    [SerializeField] private List<Sprite> m_BackgroundImages = new();
 
     [SerializeField] private bool m_IgnoreLensShiftX = false;
     [SerializeField] private bool m_IgnoreLensShiftY = false;
@@ -101,7 +101,7 @@ public class UiCameraSetup : MonoBehaviour
         m_UiCameraMaterial.mainTexture = m_UiCamera.targetTexture;
     }
 
-    private void Setup(in Camera i_Camera)
+    private void Setup(Camera i_Camera)
     {
         Sprite imageSprite = m_BackgroundImages[m_CurrentImageIndex];
         if (m_ImageComponent != null) m_ImageComponent.sprite = imageSprite;
@@ -132,7 +132,7 @@ public class UiCameraSetup : MonoBehaviour
         FixProportions(i_Camera);
     }
 
-    private void SetIntrinsicParameters(in Camera i_Camera, in XElement i_CalibrationTag)
+    private void SetIntrinsicParameters(Camera i_Camera, XElement i_CalibrationTag)
     {
         // Extract calibration data
         float? sensorX = null;
@@ -178,7 +178,7 @@ public class UiCameraSetup : MonoBehaviour
         }
     }
 
-    private void SetExtrinsicParameters(in Camera i_Camera, in XElement i_ExtrinsicsTag)
+    private void SetExtrinsicParameters(Camera i_Camera, XElement i_ExtrinsicsTag)
     {
         // Extract extrinsics data (rotation & translation)
         float[] rotationValues = Array.ConvertAll(
@@ -203,7 +203,7 @@ public class UiCameraSetup : MonoBehaviour
         i_Camera.transform.rotation = Quaternion.Euler(parameters.rotation);
     }
 
-    private void FixProportions(in Camera i_Camera)
+    private void FixProportions(Camera i_Camera)
     {
         if (m_ImageTransform == null || m_ImageRatio == null || m_IntrinsicParameters == null)
             return;

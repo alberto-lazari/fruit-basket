@@ -1,35 +1,43 @@
 using System.Collections.Generic;
-
+using System.Threading;
+using TMPro;
 using UnityEngine;
 
 public class BasketFruitCounter : MonoBehaviour
 {
     [SerializeField] private SphereCollider m_Collider;
+    [SerializeField] private TextMeshProUGUI m_CounterText;
 
-    private HashSet<GameObject> m_Fruits = new();
-
-    public int Fruits()
-    {
-        return m_Fruits.Count;
-    }
+    private int m_LockedFruitCount = 0;
+    private int m_DisplayFruitCount = 0;
 
     private void Start()
     {
         if (m_Collider == null) m_Collider = GetComponent<SphereCollider>();
+        if (m_CounterText == null) Debug.LogError("UI Counter text is not assigned");
     }
 
     private void Update()
     {
-        Debug.Log($"Points: {Fruits()}");
+        int currentFruits = m_LockedFruitCount;
+
+        // Update UI if fruit count changed
+        if (m_DisplayFruitCount != currentFruits && m_CounterText != null)
+        {
+            m_DisplayFruitCount = currentFruits;
+            m_CounterText.text = $"Fruits in Basket: {currentFruits}";
+        }
     }
 
-    private void OnTriggerEnter(Collider i_Fruit)
+    private void OnTriggerEnter(Collider i_Other)
     {
-        m_Fruits.Add(i_Fruit.gameObject);
+        if (!i_Other.CompareTag("Fruit")) return;
+        Interlocked.Increment(ref m_LockedFruitCount);
     }
 
-    private void OnTriggerExit(Collider i_Fruit)
+    private void OnTriggerExit(Collider i_Other)
     {
-        m_Fruits.Remove(i_Fruit.gameObject);
+        if (!i_Other.CompareTag("Fruit")) return;
+        Interlocked.Decrement(ref m_LockedFruitCount);
     }
 }

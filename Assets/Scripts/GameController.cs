@@ -8,13 +8,13 @@ public class GameController : MonoBehaviour
     [SerializeField] private FruitThrower m_Thrower;
     [SerializeField] private UiCameraSetup m_CameraSetup;
 
-    private List<Vector2> m_ThrowGesturePoints = new List<Vector2>();
+    private List<Vector2> m_ThrowGesturePoints = new();
 
     private InputActions m_InputActions;
 
     private void Awake()
     {
-        m_InputActions = new InputActions();
+        m_InputActions = new();
         m_InputActions.Game.MoveLeft.performed += ctx => m_CameraSetup.MoveLeft();
         m_InputActions.Game.MoveRight.performed += ctx => m_CameraSetup.MoveRight();
     }
