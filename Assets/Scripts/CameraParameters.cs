@@ -9,11 +9,11 @@ public class CameraParameters
         public Vector2 sensorSize;
         public Vector2 lensShift;
 
-        public Intrinsics(float i_FocalLength, Vector2 i_SensorSize, Vector2 i_LensShift)
+        public Intrinsics(float focalLength, Vector2 sensorSize, Vector2 lensShift)
         {
-            focalLength = i_FocalLength;
-            sensorSize = i_SensorSize;
-            lensShift = i_LensShift;
+            this.focalLength = focalLength;
+            this.sensorSize = sensorSize;
+            this.lensShift = lensShift;
         }
     }
 
@@ -22,10 +22,10 @@ public class CameraParameters
         public Vector3 position;
         public Vector3 rotation;
 
-        public Extrinsics(Vector3 i_Position, Vector3 i_Rotation)
+        public Extrinsics(Vector3 position, Vector3 rotation)
         {
-            position = i_Position;
-            rotation = i_Rotation;
+            this.position = position;
+            this.rotation = rotation;
         }
     }
 
@@ -46,35 +46,35 @@ public class CameraParameters
     };
 
 
-    public static Intrinsics ComputeIntrinsics(int i_ImageWidth, int i_ImageHeight,
-            Vector2 i_FocalLengthPx, Vector2 i_PrincipalPoint, float? i_SensorX)
+    public static Intrinsics ComputeIntrinsics(int imageWidth, int imageHeight,
+            Vector2 focalLengthPx, Vector2 principalPoint, float? sensorX)
     {
-        float sensorX = i_SensorX ?? 35f;
-        float focalLength = i_FocalLengthPx.x * (sensorX / i_ImageWidth);
+        float defaultSensorX = 35f;
+        float focalLength = focalLengthPx.x * (sensorX ?? defaultSensorX / imageWidth);
         Vector2 sensorSize = new Vector2(
-            sensorX,
-            focalLength * (i_ImageHeight / i_FocalLengthPx.y)
+            sensorX ?? defaultSensorX,
+            focalLength * (imageHeight / focalLengthPx.y)
         );
         Vector2 lensShift = new Vector2(
-            -(i_PrincipalPoint.x - (i_ImageWidth / 2)) / i_ImageWidth,
-            (i_PrincipalPoint.y - (i_ImageHeight / 2)) / i_ImageHeight
+            -(principalPoint.x - (imageWidth / 2)) / imageWidth,
+            (principalPoint.y - (imageHeight / 2)) / imageHeight
         );
 
         return new Intrinsics(focalLength, sensorSize, lensShift);
     }
 
-    public static Extrinsics ComputeExtrinsics(float[,] i_RotationMatrix, Vector3 i_Translation)
+    public static Extrinsics ComputeExtrinsics(float[,] rotationMatrix, Vector3 translation)
     {
         Vector3 unityPosition = MultiplyMatrixVector(YZ,
             -MultiplyMatrixVector(
-                Transpose(MultiplyMatrices(Sy, i_RotationMatrix)),
-                MultiplyMatrixVector(Sy, i_Translation)
+                Transpose(MultiplyMatrices(Sy, rotationMatrix)),
+                MultiplyMatrixVector(Sy, translation)
             )
         );
 
         // Compute the rotation matrix in Unity's reference frame (camera -> world)
         float[,] unityRotation = MultiplyMatrices(YZ,
-            Transpose(MultiplyMatrices(Sy, i_RotationMatrix))
+            Transpose(MultiplyMatrices(Sy, rotationMatrix))
         );
 
         // Convert to Unity Euler angles

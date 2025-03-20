@@ -101,7 +101,7 @@ public class UiCameraSetup : MonoBehaviour
         m_UiCameraMaterial.mainTexture = m_UiCamera.targetTexture;
     }
 
-    private void Setup(Camera i_Camera)
+    private void Setup(Camera camera)
     {
         Sprite imageSprite = m_BackgroundImages[m_CurrentImageIndex];
         if (m_ImageComponent != null) m_ImageComponent.sprite = imageSprite;
@@ -126,27 +126,27 @@ public class UiCameraSetup : MonoBehaviour
             .Element("camera");
 
         // Set camera parameters from XML values
-        SetExtrinsicParameters(i_Camera, cameraElement.Element("extrinsics"));
-        SetIntrinsicParameters(i_Camera, cameraElement.Element("calibration"));
+        SetExtrinsicParameters(camera, cameraElement.Element("extrinsics"));
+        SetIntrinsicParameters(camera, cameraElement.Element("calibration"));
 
-        FixProportions(i_Camera);
+        FixProportions(camera);
     }
 
-    private void SetIntrinsicParameters(Camera i_Camera, XElement i_CalibrationTag)
+    private void SetIntrinsicParameters(Camera camera, XElement calibrationTag)
     {
         // Extract calibration data
         float? sensorX = null;
-        XAttribute? ccwidth = i_CalibrationTag.Attribute("ccwidth");
+        XAttribute? ccwidth = calibrationTag.Attribute("ccwidth");
         if (ccwidth != null) sensorX = float.Parse(ccwidth.Value);
-        int imageWidth = int.Parse(i_CalibrationTag.Attribute("w").Value);
-        int imageHeight = int.Parse(i_CalibrationTag.Attribute("h").Value);
+        int imageWidth = int.Parse(calibrationTag.Attribute("w").Value);
+        int imageHeight = int.Parse(calibrationTag.Attribute("h").Value);
         Vector2 focalLengthPx = new Vector2(
-            float.Parse(i_CalibrationTag.Attribute("fx").Value),
-            float.Parse(i_CalibrationTag.Attribute("fy").Value)
+            float.Parse(calibrationTag.Attribute("fx").Value),
+            float.Parse(calibrationTag.Attribute("fy").Value)
         );
         Vector2 principalPoint = new Vector2(
-            float.Parse(i_CalibrationTag.Attribute("cx").Value),
-            float.Parse(i_CalibrationTag.Attribute("cy").Value)
+            float.Parse(calibrationTag.Attribute("cx").Value),
+            float.Parse(calibrationTag.Attribute("cy").Value)
         );
 
         // Compute parameters
@@ -158,9 +158,9 @@ public class UiCameraSetup : MonoBehaviour
         if (m_IgnoreLensShiftY) m_IntrinsicParameters.lensShift.y = 0f;
 
         // Apply parameters
-        i_Camera.focalLength = m_IntrinsicParameters.focalLength;
-        i_Camera.sensorSize = m_IntrinsicParameters.sensorSize;
-        i_Camera.lensShift = m_IntrinsicParameters.lensShift;
+        camera.focalLength = m_IntrinsicParameters.focalLength;
+        camera.sensorSize = m_IntrinsicParameters.sensorSize;
+        camera.lensShift = m_IntrinsicParameters.lensShift;
 
         if (m_ImageRatio == null) return;
 
@@ -170,19 +170,19 @@ public class UiCameraSetup : MonoBehaviour
         {
             // Ratios differ => image is vertical
             // Zephyr processed it by rotating -90 deg
-            i_Camera.transform.Rotate(0f, 0f, 90f, Space.Self);
-            i_Camera.sensorSize = new Vector2(
-                i_Camera.sensorSize.y,
-                i_Camera.sensorSize.x
+            camera.transform.Rotate(0f, 0f, 90f, Space.Self);
+            camera.sensorSize = new Vector2(
+                camera.sensorSize.y,
+                camera.sensorSize.x
             );
         }
     }
 
-    private void SetExtrinsicParameters(Camera i_Camera, XElement i_ExtrinsicsTag)
+    private void SetExtrinsicParameters(Camera camera, XElement extrinsicsTag)
     {
         // Extract extrinsics data (rotation & translation)
         float[] rotationValues = Array.ConvertAll(
-            i_ExtrinsicsTag.Element("rotation").Value.Split(' '), float.Parse
+            extrinsicsTag.Element("rotation").Value.Split(' '), float.Parse
         );
         float[,] rotation = new float[,]
         {
@@ -191,7 +191,7 @@ public class UiCameraSetup : MonoBehaviour
             { rotationValues[6], rotationValues[7], rotationValues[8] },
         };
         float[] translationValues = Array.ConvertAll(
-            i_ExtrinsicsTag.Element("translation").Value.Split(' '), float.Parse
+            extrinsicsTag.Element("translation").Value.Split(' '), float.Parse
         );
         Vector3 translation = new Vector3(translationValues[0], translationValues[1], translationValues[2]);
 
@@ -199,11 +199,11 @@ public class UiCameraSetup : MonoBehaviour
         CameraParameters.Extrinsics parameters = CameraParameters.ComputeExtrinsics(
             rotation, translation
         );
-        i_Camera.transform.position = parameters.position;
-        i_Camera.transform.rotation = Quaternion.Euler(parameters.rotation);
+        camera.transform.position = parameters.position;
+        camera.transform.rotation = Quaternion.Euler(parameters.rotation);
     }
 
-    private void FixProportions(Camera i_Camera)
+    private void FixProportions(Camera camera)
     {
         if (m_ImageTransform == null || m_ImageRatio == null || m_IntrinsicParameters == null)
             return;
@@ -213,12 +213,12 @@ public class UiCameraSetup : MonoBehaviour
         Vector2 baseSensorSize = m_IntrinsicParameters.sensorSize;
 
         // Scale sensor matching image width
-        i_Camera.sensorSize = new Vector2(screenRatio, 1f) * baseSensorSize.y;
+        camera.sensorSize = new Vector2(screenRatio, 1f) * baseSensorSize.y;
 
         // Scale image
         m_ImageTransform.localScale = Vector3.one * (imageRatio / screenRatio);
 
         // Scale focal lenght accordingly
-        i_Camera.focalLength = m_IntrinsicParameters.focalLength * imageRatio;
+        camera.focalLength = m_IntrinsicParameters.focalLength * imageRatio;
     }
 }

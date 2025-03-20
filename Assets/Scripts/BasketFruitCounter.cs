@@ -29,15 +29,15 @@ public class BasketFruitCounter : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider i_Other)
+    private void OnTriggerEnter(Collider other)
     {
-        if (!i_Other.CompareTag("Fruit")) return;
+        if (!other.CompareTag("Fruit")) return;
         Interlocked.Increment(ref m_LockedFruitCount);
     }
 
-    private void OnTriggerExit(Collider i_Other)
+    private void OnTriggerExit(Collider other)
     {
-        if (!i_Other.CompareTag("Fruit")) return;
+        if (!other.CompareTag("Fruit")) return;
         Interlocked.Decrement(ref m_LockedFruitCount);
     }
 }
