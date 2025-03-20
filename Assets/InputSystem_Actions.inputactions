@@ -522,15 +522,6 @@
             "id": "c69797a4-2892-4a9f-9805-ddd3a906cd8d",
             "actions": [
                 {
-                    "name": "Throw",
-                    "type": "Button",
-                    "id": "70615d1a-8c5f-4c2f-b87c-65f2fffda066",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "MoveLeft",
                     "type": "Button",
                     "id": "22a50e27-2143-46f0-bec9-dad94522cfe9",
@@ -550,17 +541,6 @@
                 }
             ],
             "bindings": [
-                {
-                    "name": "",
-                    "id": "a4f66700-9d4b-4ecb-97af-60416ee122c7",
-                    "path": "<Keyboard>/w",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Throw",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
                 {
                     "name": "",
                     "id": "651136d8-14cf-41d4-af6c-120794aae0b7",

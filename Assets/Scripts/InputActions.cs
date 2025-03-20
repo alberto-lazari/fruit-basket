@@ -544,15 +544,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             ""id"": ""c69797a4-2892-4a9f-9805-ddd3a906cd8d"",
             ""actions"": [
                 {
-                    ""name"": ""Throw"",
-                    ""type"": ""Button"",
-                    ""id"": ""70615d1a-8c5f-4c2f-b87c-65f2fffda066"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""MoveLeft"",
                     ""type"": ""Button"",
                     ""id"": ""22a50e27-2143-46f0-bec9-dad94522cfe9"",
@@ -572,17 +563,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                 }
             ],
             ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""a4f66700-9d4b-4ecb-97af-60416ee122c7"",
-                    ""path"": ""<Keyboard>/w"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Throw"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
                 {
                     ""name"": """",
                     ""id"": ""651136d8-14cf-41d4-af6c-120794aae0b7"",
@@ -707,7 +687,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
         // Game
         m_Game = asset.FindActionMap("Game", throwIfNotFound: true);
-        m_Game_Throw = m_Game.FindAction("Throw", throwIfNotFound: true);
         m_Game_MoveLeft = m_Game.FindAction("MoveLeft", throwIfNotFound: true);
         m_Game_MoveRight = m_Game.FindAction("MoveRight", throwIfNotFound: true);
     }
@@ -895,14 +874,12 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     // Game
     private readonly InputActionMap m_Game;
     private List<IGameActions> m_GameActionsCallbackInterfaces = new List<IGameActions>();
-    private readonly InputAction m_Game_Throw;
     private readonly InputAction m_Game_MoveLeft;
     private readonly InputAction m_Game_MoveRight;
     public struct GameActions
     {
         private @InputActions m_Wrapper;
         public GameActions(@InputActions wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Throw => m_Wrapper.m_Game_Throw;
         public InputAction @MoveLeft => m_Wrapper.m_Game_MoveLeft;
         public InputAction @MoveRight => m_Wrapper.m_Game_MoveRight;
         public InputActionMap Get() { return m_Wrapper.m_Game; }
@@ -914,9 +891,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_GameActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_GameActionsCallbackInterfaces.Add(instance);
-            @Throw.started += instance.OnThrow;
-            @Throw.performed += instance.OnThrow;
-            @Throw.canceled += instance.OnThrow;
             @MoveLeft.started += instance.OnMoveLeft;
             @MoveLeft.performed += instance.OnMoveLeft;
             @MoveLeft.canceled += instance.OnMoveLeft;
@@ -927,9 +901,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
 
         private void UnregisterCallbacks(IGameActions instance)
         {
-            @Throw.started -= instance.OnThrow;
-            @Throw.performed -= instance.OnThrow;
-            @Throw.canceled -= instance.OnThrow;
             @MoveLeft.started -= instance.OnMoveLeft;
             @MoveLeft.performed -= instance.OnMoveLeft;
             @MoveLeft.canceled -= instance.OnMoveLeft;
@@ -1013,7 +984,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     }
     public interface IGameActions
     {
-        void OnThrow(InputAction.CallbackContext context);
         void OnMoveLeft(InputAction.CallbackContext context);
         void OnMoveRight(InputAction.CallbackContext context);
     }
