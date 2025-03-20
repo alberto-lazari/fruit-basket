@@ -54,13 +54,14 @@ public class FruitThrower : MonoBehaviour
         m_CurrentFruit.SetActive(true);
     }
 
-    public void ThrowFruit()
+    public void ThrowFruit(Vector2 i_Gesture)
     {
         if (m_CurrentFruit == null) return;
 
+        Debug.Log(i_Gesture);
         Vector3 deviation = new Vector3(
-            Random.Range(-.5f, .5f),
-            Random.Range(.5f, 1.5f),
+            i_Gesture.x,
+            i_Gesture.y,
             1
         );
         Rigidbody rb = m_CurrentFruit.GetComponent<Rigidbody>();
