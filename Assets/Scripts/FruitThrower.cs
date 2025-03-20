@@ -42,7 +42,9 @@ public class FruitThrower : MonoBehaviour
 
         transform.position = camera.transform.position;
         transform.rotation = camera.transform.rotation;
+
         m_CurrentFruit.transform.position = FruitPosition();
+        m_CurrentFruit.transform.rotation = transform.rotation;
     }
 
     private void SpawnFruit()
@@ -51,7 +53,7 @@ public class FruitThrower : MonoBehaviour
         m_CurrentFruit = Instantiate<GameObject>(
             fruit,
             FruitPosition(),
-            fruit.transform.rotation
+            transform.rotation
         );
         m_CurrentFruit.GetComponent<Rigidbody>().useGravity = false;
 
