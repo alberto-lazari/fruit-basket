@@ -4,7 +4,7 @@ public class FruitThrower : MonoBehaviour
 {
     [SerializeField] private GameObject m_Apple;
     [SerializeField] private GameObject m_Banana;
-    [SerializeField] private float m_ForceModifier = 5f;
+    [SerializeField] private float m_ForceModifier = 15f;
     [SerializeField] private float m_Torque = 2f;
     [SerializeField] private float m_SpawnDistance = 20f;
     [SerializeField] private float m_SpawnTime = 2f;
@@ -111,7 +111,7 @@ public class FruitThrower : MonoBehaviour
         );
         Vector3 force = transform.rotation * deviation;
         force *= m_ForceModifier;
-        Debug.Log($"gesture: {gesture}, deviation: {deviation}, force: {force}");
+        // Debug.Log($"gesture: {gesture}, deviation: {deviation}, force: {force}");
 
         Rigidbody rb = m_CurrentFruit.GetComponent<Rigidbody>();
         rb.useGravity = true;

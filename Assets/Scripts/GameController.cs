@@ -7,7 +7,7 @@ public class GameController : MonoBehaviour
 {
     [SerializeField] private FruitThrower m_Thrower;
     [SerializeField] private UiCameraSetup m_CameraSetup;
-    [SerializeField] private int m_GesturePointsNumber = 10;
+    [SerializeField] private int m_GesturePointsNumber = 8;
     [SerializeField] private float m_CameraGestureDeadZone = 0.05f;
 
     private InputActions m_InputActions;
@@ -47,7 +47,7 @@ public class GameController : MonoBehaviour
     // Graphics frames are not reliable since they might skip points
     private void FixedUpdate()
     {
-        if (m_IsDraggingFruit) AddMousePoint();
+        AddMousePoint();
     }
 
     private void OnEnable()
@@ -95,6 +95,7 @@ public class GameController : MonoBehaviour
     private void OnGestureEnd()
     {
         AddMousePoint();
+        Debug.Log(m_GesturePoints.Count);
         if (m_GesturePoints.Count < m_GesturePointsNumber) return;
 
         List<Vector2> gesturePoints = m_GesturePoints.GetRange(

@@ -72,7 +72,7 @@ public class UiCameraSetup : MonoBehaviour
 
         if (m_ImageObject == null) m_ImageObject = m_UiCamera
             .transform.Find("Canvas")
-            .transform.Find("Image")
+            .transform.Find("Background Image")
             .gameObject;
 
         // Cache components
