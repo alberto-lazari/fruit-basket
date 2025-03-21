@@ -7,8 +7,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
-using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
+using UnityEngine;
 
 public class UiCameraSetup : MonoBehaviour
 {
@@ -37,24 +38,17 @@ public class UiCameraSetup : MonoBehaviour
         m_CurrentImageIndex = (m_CurrentImageIndex + m_BackgroundImages.Count - 1)
             % m_BackgroundImages.Count;
 
-        if (m_UiCamera == null || m_3dCamera == null) return;
-
         // Setup cameras for the new image
-        Setup(m_UiCamera);
-        Setup(m_3dCamera);
+        SetupCameras();
     }
 
     public void MoveRight()
     {
         // Update current image
-        m_CurrentImageIndex = (m_CurrentImageIndex + 1)
-            % m_BackgroundImages.Count;
-
-        if (m_UiCamera == null || m_3dCamera == null) return;
+        m_CurrentImageIndex = (m_CurrentImageIndex + 1) % m_BackgroundImages.Count;
 
         // Setup cameras for the new image
-        Setup(m_UiCamera);
-        Setup(m_3dCamera);
+        SetupCameras();
     }
 
     private void Start()
@@ -85,10 +79,7 @@ public class UiCameraSetup : MonoBehaviour
             return;
         }
 
-        // Setup both cameras
-        Setup(m_UiCamera);
-        Setup(m_3dCamera);
-
+        SetupCameras();
         InitCameraShader();
     }
 
@@ -101,17 +92,43 @@ public class UiCameraSetup : MonoBehaviour
         m_UiCameraMaterial.mainTexture = m_UiCamera.targetTexture;
     }
 
-    private void Setup(Camera camera)
+    private IEnumerator<UnityWebRequestAsyncOperation> LoadXmpData(Action<XElement?> onComplete)
     {
         Sprite imageSprite = m_BackgroundImages[m_CurrentImageIndex];
         if (m_ImageComponent != null) m_ImageComponent.sprite = imageSprite;
 
+        string imageName = imageSprite.name;
+        m_ImageRatio = (float)imageSprite.texture.width / imageSprite.texture.height;
+
+#if !UNITY_EDITOR && UNITY_WEBGL
+        // WebGL: Construct the path and fetch using UnityWebRequest.
+        string xmpFilePath = Path.Combine(Application.streamingAssetsPath, "CameraParameters", $"{imageName}.jpg.xmp");
+        using (UnityWebRequest request = UnityWebRequest.Get(xmpFilePath))
+        {
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError($"Failed to load {xmpFilePath}: {request.error}");
+                onComplete(null);
+                yield break;
+            }
+
+            XElement cameraElement = XDocument
+                .Parse(request.downloadHandler.text)
+                .Element("camera");
+
+            onComplete(cameraElement);
+        }
+#else
+        // Non-WebGL platforms: Read directly from the file system.
         if (!Directory.Exists(k_CameraParametersDirectory))
         {
             Debug.LogError($"Directory {k_CameraParametersDirectory} does not exist.");
-            return;
+            onComplete(null);
+            yield break;
         }
-        string imageName = imageSprite.name;
+
         string xmpFilePath = Directory.EnumerateFiles(k_CameraParametersDirectory, "*.xmp")
             .Where(file => Regex.IsMatch(
                 Path.GetFileNameWithoutExtension(file),
@@ -119,12 +136,32 @@ public class UiCameraSetup : MonoBehaviour
             )
             .First();
 
-        m_ImageRatio = (float)imageSprite.texture.width / imageSprite.texture.height;
-
         XElement cameraElement = XDocument
             .Parse(File.ReadAllText(xmpFilePath))
             .Element("camera");
 
+        onComplete(cameraElement);
+#endif
+    }
+
+    private void SetupCameras()
+    {
+        if (m_UiCamera == null || m_3dCamera == null) return;
+
+        StartCoroutine(LoadXmpData(cameraElement =>
+        {
+            if (cameraElement == null)
+            {
+                Debug.LogError("Failed to load camera parameters");
+                return;
+            }
+            Setup(m_UiCamera, cameraElement);
+            Setup(m_3dCamera, cameraElement);
+        }));
+    }
+
+    private void Setup(Camera camera, XElement cameraElement)
+    {
         // Set camera parameters from XML values
         SetExtrinsicParameters(camera, cameraElement.Element("extrinsics"));
         SetIntrinsicParameters(camera, cameraElement.Element("calibration"));

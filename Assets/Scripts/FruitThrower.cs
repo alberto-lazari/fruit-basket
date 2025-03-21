@@ -111,7 +111,6 @@ public class FruitThrower : MonoBehaviour
         );
         Vector3 force = transform.rotation * deviation;
         force *= m_ForceModifier;
-        // Debug.Log($"gesture: {gesture}, deviation: {deviation}, force: {force}");
 
         Rigidbody rb = m_CurrentFruit.GetComponent<Rigidbody>();
         rb.useGravity = true;

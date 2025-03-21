@@ -95,7 +95,6 @@ public class GameController : MonoBehaviour
     private void OnGestureEnd()
     {
         AddMousePoint();
-        Debug.Log(m_GesturePoints.Count);
         if (m_GesturePoints.Count < m_GesturePointsNumber) return;
 
         List<Vector2> gesturePoints = m_GesturePoints.GetRange(
