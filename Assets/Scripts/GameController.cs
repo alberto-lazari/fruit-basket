@@ -80,15 +80,17 @@ public class GameController : MonoBehaviour
 
     private void ProcessGesture()
     {
-        if (m_GesturePoints.Count < 2) return;
+        int N = 10;
+        if (m_GesturePoints.Count < N) return;
 
-        Vector2 last = m_GesturePoints[m_GesturePoints.Count - 1];
-        Vector2 first = m_GesturePoints[0];
+        var gesturePoints = m_GesturePoints.GetRange(m_GesturePoints.Count - N, N);
+        Vector2 last = gesturePoints[gesturePoints.Count - 1];
+        Vector2 first = gesturePoints[0];
         Vector2 gesture = last - first;
 
         if (m_IsDraggingFruit)
         {
-            m_Thrower.OnFruitRelease(gesture);
+            m_Thrower.OnFruitRelease(gesture, last);
             m_IsDraggingFruit = false;
         }
         // Camera movement gestures

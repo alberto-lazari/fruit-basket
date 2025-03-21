@@ -4,7 +4,7 @@ public class FruitThrower : MonoBehaviour
 {
     [SerializeField] private GameObject m_Apple;
     [SerializeField] private GameObject m_Banana;
-    [SerializeField] private float m_Force = 25f;
+    [SerializeField] private float m_ForceModifier = 0.05f;
     [SerializeField] private float m_Torque = 2f;
     [SerializeField] private float m_SpawnDistance = 20f;
     [SerializeField] private float m_SpawnTime = 2f;
@@ -86,39 +86,36 @@ public class FruitThrower : MonoBehaviour
     {
         if (!m_IsDragging || m_CurrentFruit == null) return;
 
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
         // Project onto the dragging plane
-        if (m_DragPlane.Raycast(ray, out float enter))
-        {
-            Vector3 worldPoint = ray.GetPoint(enter);
-            Vector3 newLocalPoint = transform.InverseTransformPoint(worldPoint);
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        m_DragPlane.Raycast(ray, out float enter);
+        Vector3 newLocalPoint = transform.InverseTransformPoint(ray.GetPoint(enter));
 
-            // Keep Z unchanged and apply the original offset
-            newLocalPoint.z = m_HitOffset.z;
-            m_CurrentFruit.transform.position = transform.TransformPoint(newLocalPoint);
-        }
+        // Keep Z unchanged and apply the original offset
+        newLocalPoint.z = m_HitOffset.z;
+        m_CurrentFruit.transform.position = transform.TransformPoint(newLocalPoint);
     }
 
     /**
      * Throw the current fruit with a force based on the gesture.
      */
-    public void OnFruitRelease(Vector2 gesture)
+    public void OnFruitRelease(Vector2 gesture, Vector2 releasePoint)
     {
         if (m_CurrentFruit == null) return;
 
-        Debug.Log(gesture);
+        float releaseX = Mathf.Abs(releasePoint.x - Screen.width / 2);
         Vector3 deviation = new Vector3(
-            gesture.x,
-            gesture.y,
-            1
+            gesture.x + (Mathf.Sqrt(releaseX) * gesture.x * m_ForceModifier),
+            Mathf.Sqrt(releasePoint.y) * gesture.y * m_ForceModifier,
+            Mathf.Abs(gesture.y)
         );
+        Vector3 force = transform.rotation * deviation;
+        force *= m_ForceModifier;
+        Debug.Log($"gesture: {gesture}, deviation: {deviation}, force: {force}");
+
         Rigidbody rb = m_CurrentFruit.GetComponent<Rigidbody>();
         rb.useGravity = true;
-        rb.AddForce(
-            transform.rotation * deviation * m_Force,
-            ForceMode.Impulse
-        );
+        rb.AddForce(force, ForceMode.Impulse);
         rb.AddTorque(
             transform.right * m_Torque,
             ForceMode.Impulse
