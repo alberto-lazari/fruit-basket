@@ -90,6 +90,10 @@ public class GameController : MonoBehaviour
 
         if (m_IsDraggingFruit)
         {
+            // Make screen coordinates resolution-agnostic
+            gesture.x /= Screen.width;
+            gesture.y /= Screen.height;
+
             m_Thrower.OnFruitRelease(gesture, last);
             m_IsDraggingFruit = false;
         }

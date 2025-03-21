@@ -4,7 +4,7 @@ public class FruitThrower : MonoBehaviour
 {
     [SerializeField] private GameObject m_Apple;
     [SerializeField] private GameObject m_Banana;
-    [SerializeField] private float m_ForceModifier = 0.05f;
+    [SerializeField] private float m_ForceModifier = 5f;
     [SerializeField] private float m_Torque = 2f;
     [SerializeField] private float m_SpawnDistance = 20f;
     [SerializeField] private float m_SpawnTime = 2f;
@@ -103,7 +103,7 @@ public class FruitThrower : MonoBehaviour
     {
         if (m_CurrentFruit == null) return;
 
-        float releaseX = Mathf.Abs(releasePoint.x - Screen.width / 2);
+        float releaseX = Mathf.Abs(releasePoint.x - 1 / 2);
         Vector3 deviation = new Vector3(
             gesture.x + (Mathf.Sqrt(releaseX) * gesture.x * m_ForceModifier),
             Mathf.Sqrt(releasePoint.y) * gesture.y * m_ForceModifier,

@@ -1623,7 +1623,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Apple: {fileID: 8136433337378366991, guid: 4404b7d4a1c5eda44b0516be08f448ce, type: 3}
   m_Banana: {fileID: 3371883701264801863, guid: 3887d7f848a5e104981a48a62c81847e, type: 3}
-  m_ForceModifier: 0.1
+  m_ForceModifier: 5
   m_Torque: 2
   m_SpawnDistance: 20
   m_SpawnTime: 2
