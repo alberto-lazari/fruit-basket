@@ -1,8 +1,20 @@
 # Fruit Basket
 
+<iframe frameborder="0" src="https://itch.io/embed/3413297?bg_color=111111&amp;fg_color=c14e4e&amp;link_color=fa5c5c&amp;border_color=333333" width="552" height="167"><a href="https://alberto-lazari.itch.io/fruit-basket">Fruit Basket by Laz</a></iframe>
+
 A simple fruit thrower based on gestures.
 
-**Try it on [itch.io](https://alberto-lazari.itch.io/fruit-basket) from your browser (mobile friendly)!**
+Developed as a homework for the Human-Computer Interaction course of the Master in Computer Game Development.
+
+
+## Aim of the Project
+
+The homework required to create a 3D scene with photogrammetry and then place it in a Unity game with a simple mechanic,
+playing with interactions of 3D objects with the real image.
+
+This was my first game project at all, so it's more of an introduction to the Unity Engine in general,
+as well as a practical mixed/augmented-reality application.
+
 
 ## Credits
 
