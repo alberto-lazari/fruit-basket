@@ -1,6 +1,6 @@
 # Fruit Basket
 
-<iframe frameborder="0" src="https://itch.io/embed/3413297?bg_color=111111&amp;fg_color=c14e4e&amp;link_color=fa5c5c&amp;border_color=333333" width="552" height="167"><a href="https://alberto-lazari.itch.io/fruit-basket">Fruit Basket by Laz</a></iframe>
+**Try it on [itch.io](https://alberto-lazari.itch.io/fruit-basket) from your browser (mobile friendly)!**
 
 A simple fruit thrower based on gestures.
 
