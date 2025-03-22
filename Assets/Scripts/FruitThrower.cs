@@ -55,7 +55,7 @@ public class FruitThrower : MonoBehaviour
             FruitPosition(),
             transform.rotation
         );
-        m_CurrentFruit.GetComponent<Rigidbody>().useGravity = false;
+        m_CurrentFruit.GetComponent<Rigidbody>().isKinematic = true;
 
         m_CurrentFruit.SetActive(true);
     }
@@ -66,10 +66,11 @@ public class FruitThrower : MonoBehaviour
      */
     public bool OnFruitGrab(GameObject fruit, Vector3 grabPoint)
     {
-        if (m_IsDragging || m_CurrentFruit == null || fruit != m_CurrentFruit)
-        {
-            return m_IsDragging = false;
-        }
+        // Do not grab a new fruit if already dragging one
+        if (m_IsDragging || m_CurrentFruit == null) return false;
+
+        // Grab only if it's the spawned fruit
+        if (fruit != m_CurrentFruit) return m_IsDragging = false;
 
         // Store the offset in local space
         m_HitOffset = transform.InverseTransformPoint(grabPoint);
@@ -103,22 +104,32 @@ public class FruitThrower : MonoBehaviour
     {
         if (m_CurrentFruit == null) return;
 
-        float releaseX = Mathf.Abs(releasePoint.x - 1 / 2);
+        // Horizontal release point relative to screen center
+        float releaseX = Mathf.Abs(releasePoint.x - 0.5f);
+
         Vector3 deviation = new Vector3(
+            // Add a horizontal deviation to simulate perspective
             gesture.x + (Mathf.Sqrt(releaseX) * gesture.x * m_ForceModifier),
+
+            // Use vertical release point as the curve height (multiplied by forward magnitude)
             Mathf.Sqrt(releasePoint.y) * gesture.y * m_ForceModifier,
+
+            // Vertical magnitude of the gesture is the actual forward force
             Mathf.Abs(gesture.y)
         );
         Vector3 force = transform.rotation * deviation;
         force *= m_ForceModifier;
 
         Rigidbody rb = m_CurrentFruit.GetComponent<Rigidbody>();
-        rb.useGravity = true;
+        rb.isKinematic = false;
         rb.AddForce(force, ForceMode.Impulse);
         rb.AddTorque(
             transform.right * m_Torque,
             ForceMode.Impulse
         );
+
+        // Apply physics changes instantly
+        Physics.SyncTransforms();
 
         // Detach the fruit from gesture
         m_IsDragging = false;
