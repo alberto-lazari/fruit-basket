@@ -39,7 +39,7 @@ public class GameController : MonoBehaviour
         if (IsMouseGestureActive())
         {
             if (Input.GetMouseButtonDown(0)) OnGestureBegin();
-            if (m_IsDraggingFruit) m_Thrower.OnFruitDrag();
+            if (m_IsDraggingFruit) m_Thrower.OnFruitDrag(MousePosition());
             if (Input.GetMouseButtonUp(0)) OnGestureEnd();
         }
     }
@@ -47,7 +47,7 @@ public class GameController : MonoBehaviour
     // Graphics frames are not reliable since they might skip points
     private void FixedUpdate()
     {
-        AddMousePoint();
+        m_GesturePoints.Add(MousePosition());
     }
 
     private void OnEnable()
@@ -67,21 +67,21 @@ public class GameController : MonoBehaviour
             || Input.GetMouseButtonUp(0);
     }
 
-    private void AddMousePoint()
+    /**
+     * Return viewport mouse position, normalized over the current screen size
+     */
+    private Vector2 MousePosition()
     {
-        Vector2 mousePosition = Input.mousePosition;
-
-        // Make mouse coordinates resolution-agnostic
-        mousePosition.x /= Screen.width;
-        mousePosition.y /= Screen.height;
-
-        m_GesturePoints.Add(mousePosition);
+        return new Vector2(
+            Input.mousePosition.x / Screen.width,
+            Input.mousePosition.y / Screen.height
+        );
     }
 
     private void OnGestureBegin()
     {
         // Perform raycast to check if the mouse is over a fruit
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = Camera.main.ViewportPointToRay(MousePosition());
         if (Physics.Raycast(ray, out RaycastHit hit) && hit.collider.CompareTag("Fruit"))
         {
             m_IsDraggingFruit = m_Thrower.OnFruitGrab(hit.collider.gameObject, hit.point);
@@ -89,12 +89,12 @@ public class GameController : MonoBehaviour
 
         // Clear previous points and begin new gesture
         m_GesturePoints.Clear();
-        AddMousePoint();
+        m_GesturePoints.Add(MousePosition());
     }
 
     private void OnGestureEnd()
     {
-        AddMousePoint();
+        m_GesturePoints.Add(MousePosition());
         if (m_GesturePoints.Count < m_GesturePointsNumber) return;
 
         List<Vector2> gesturePoints = m_GesturePoints.GetRange(

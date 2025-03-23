@@ -83,12 +83,12 @@ public class FruitThrower : MonoBehaviour
     /**
      * Update position to keep the hit point aligned with the cursor.
      */
-    public void OnFruitDrag()
+    public void OnFruitDrag(Vector2 mousePosition)
     {
         if (!m_IsDragging || m_CurrentFruit == null) return;
 
         // Project onto the dragging plane
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = Camera.main.ViewportPointToRay(mousePosition);
         m_DragPlane.Raycast(ray, out float enter);
         Vector3 newLocalPoint = transform.InverseTransformPoint(ray.GetPoint(enter));
 

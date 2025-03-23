@@ -28,6 +28,7 @@ public class UiCameraSetup : MonoBehaviour
 
     private Image? m_ImageComponent;
     private RectTransform? m_ImageTransform;
+    private float? m_ScreenRatio;
     private float? m_ImageRatio;
     private CameraParameters.Intrinsics? m_IntrinsicParameters;
     private int m_CurrentImageIndex = 0;
@@ -83,10 +84,22 @@ public class UiCameraSetup : MonoBehaviour
         InitCameraShader();
     }
 
+    public void Update()
+    {
+        if (m_UiCamera == null || m_3dCamera == null) return;
+
+        float currentScreenRatio = (float)Screen.width / Screen.height;
+        if (currentScreenRatio == m_ScreenRatio) return;
+
+        m_ScreenRatio = currentScreenRatio;
+
+        FixProportions(m_UiCamera);
+        FixProportions(m_3dCamera);
+    }
+
     private void InitCameraShader()
     {
         if (m_UiCamera == null || m_UiCameraMaterial == null) return;
-
         m_UiCamera.targetTexture?.Release();
         m_UiCamera.targetTexture = new RenderTexture(Screen.width, Screen.height, 24);
         m_UiCameraMaterial.mainTexture = m_UiCamera.targetTexture;
@@ -245,8 +258,8 @@ public class UiCameraSetup : MonoBehaviour
         if (m_ImageTransform == null || m_ImageRatio == null || m_IntrinsicParameters == null)
             return;
 
+        float screenRatio = m_ScreenRatio ?? (float)Screen.width / Screen.height;
         float imageRatio = (float)m_ImageRatio;
-        float screenRatio = (float)Screen.width / Screen.height;
         Vector2 baseSensorSize = m_IntrinsicParameters.sensorSize;
 
         // Scale sensor matching image width
