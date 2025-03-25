@@ -2,14 +2,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
+using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
-using UnityEngine;
 
 public class UiCameraSetup : MonoBehaviour
 {
@@ -187,16 +188,16 @@ public class UiCameraSetup : MonoBehaviour
         // Extract calibration data
         float? sensorX = null;
         XAttribute? ccwidth = calibrationTag.Attribute("ccwidth");
-        if (ccwidth != null) sensorX = float.Parse(ccwidth.Value);
+        if (ccwidth != null) sensorX = float.Parse(ccwidth.Value, CultureInfo.InvariantCulture);
         int imageWidth = int.Parse(calibrationTag.Attribute("w").Value);
         int imageHeight = int.Parse(calibrationTag.Attribute("h").Value);
         Vector2 focalLengthPx = new Vector2(
-            float.Parse(calibrationTag.Attribute("fx").Value),
-            float.Parse(calibrationTag.Attribute("fy").Value)
+            float.Parse(calibrationTag.Attribute("fx").Value, CultureInfo.InvariantCulture),
+            float.Parse(calibrationTag.Attribute("fy").Value, CultureInfo.InvariantCulture)
         );
         Vector2 principalPoint = new Vector2(
-            float.Parse(calibrationTag.Attribute("cx").Value),
-            float.Parse(calibrationTag.Attribute("cy").Value)
+            float.Parse(calibrationTag.Attribute("cx").Value, CultureInfo.InvariantCulture),
+            float.Parse(calibrationTag.Attribute("cy").Value, CultureInfo.InvariantCulture)
         );
 
         // Compute parameters
@@ -232,7 +233,8 @@ public class UiCameraSetup : MonoBehaviour
     {
         // Extract extrinsics data (rotation & translation)
         float[] rotationValues = Array.ConvertAll(
-            extrinsicsTag.Element("rotation").Value.Split(' '), float.Parse
+            extrinsicsTag.Element("rotation").Value.Split(' '),
+            s => float.Parse(s, CultureInfo.InvariantCulture)
         );
         float[,] rotation = new float[,]
         {
@@ -241,7 +243,8 @@ public class UiCameraSetup : MonoBehaviour
             { rotationValues[6], rotationValues[7], rotationValues[8] },
         };
         float[] translationValues = Array.ConvertAll(
-            extrinsicsTag.Element("translation").Value.Split(' '), float.Parse
+            extrinsicsTag.Element("translation").Value.Split(' '),
+            s => float.Parse(s, CultureInfo.InvariantCulture)
         );
         Vector3 translation = new Vector3(translationValues[0], translationValues[1], translationValues[2]);
 
