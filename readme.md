@@ -60,6 +60,8 @@ as well as a practical mixed/augmented-reality application.
   Zephyr is able to export intrinsic and extrinsic parameters of the camera used for the reconstruction,
   so it is fairly easy to place the images and configure Unity's cameras to simulate the actual ones.
 
+  ![zephyr screenshot](https://github.com/user-attachments/assets/8cc1c93c-c0da-40ce-bf04-ea3d31621100)
+
 </details>
 
 ### Automated Camera Parameters Setup
