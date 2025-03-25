@@ -1,3 +1,4 @@
+
 # Fruit Basket
 
 **Try it on [itch.io](https://alberto-lazari.itch.io/fruit-basket) from your browser!**
@@ -18,63 +19,84 @@ as well as a practical mixed/augmented-reality application.
 
 ## Technical Details
 
-### Gesture-based Fruit Throw
+### Gesture-Based Fruit Throw
+<details>
+<summary>See</summary>
 
-I implemented a simple gesture recognition inside
-[`GameController`](Assets/Scripts/GameController.cs),
-based on the last points of the cursor. \
-The controller discards all points except the last few,
-in order to better represent inertia in fast movements,
-otherwise it would also consider previous slow movements,
-that should not contribute to the final applied force. \
-Handling the result is simple:
-the longer the vector, the faster the gesture,
-since points are further away from each other in the same period of time (last few frames).
+  I implemented a simple gesture recognition inside
+  [`GameController`](Assets/Scripts/GameController.cs),
+  based on the last points of the cursor. \
+  The controller discards all points except the last few,
+  in order to better represent inertia in fast movements,
+  otherwise it would also consider previous slow movements,
+  that should not contribute to the final applied force. \
+  Handling the result is simple:
+  the longer the vector, the faster the gesture,
+  since points are further away from each other in the same period of time (last few frames).
+  
+  The applied force has three-dimensions though,
+  so how to represent it with a two-dimensional gesture on the screen? \
+  The [`FruitThrower`](Assets/Scripts/FruitThrower.cs) interprets is as a three-dimensional vector like this:
+  - Horizontal axis: it is directly proportional to the gesture horizontal magnitude.
+    It also depends on how far from the middle of the screen the fruit is released,
+    to accomodate perspective (the result would not look too realistic otherwise).
+  - Forward axis: it is simply the vertical magnitude of the gesture.
+  - Vertical axis: this is the third information that has to be made up.
+    I decided to consider the throw curve to be higher when the gesture is released on a higher point of the screen.
+    It also depends on the general force of the throw (forward force),
+    so that it is not always exactly the same.
 
-The applied force has three-dimensions though,
-so how to represent it with a two-dimensional gesture on the screen? \
-The [`FruitThrower`](Assets/Scripts/FruitThrower.cs) interprets is as a three-dimensional vector like this:
-- Horizontal axis: it is directly proportional to the gesture horizontal magnitude.
-  It also depends on how far from the middle of the screen the fruit is released,
-  to accomodate perspective (the result would not look too realistic otherwise).
-- Forward axis: it is simply the vertical magnitude of the gesture.
-- Vertical axis: this is the third information that has to be made up.
-  I decided to consider the throw curve to be higher when the gesture is released on a higher point of the screen.
-  It also depends on the general force of the throw (forward force),
-  so that it is not always exactly the same.
+  https://github.com/user-attachments/assets/6d9d2280-8932-43f0-bb7d-00cc0cd4bbb5
+
+</details>
 
 ### Real 3D Environment Scanning
+<details>
+<summary>See</summary>
 
-The game scene is a 2D image, but objects are able to interact with an underlying 3D world.
-This has been reconstructed with a photogrammetry software (3DF Zephyr), using the very same photos used as background.
+  The game scene is a 2D image, but objects are able to interact with an underlying 3D world.
+  This has been reconstructed with a photogrammetry software (3DF Zephyr), using the very same photos used as background.
+  
+  Zephyr is able to export intrinsic and extrinsic parameters of the camera used for the reconstruction,
+  so it is fairly easy to place the images and configure Unity's cameras to simulate the actual ones.
 
-Zephyr is able to export intrinsic and extrinsic parameters of the camera used for the reconstruction,
-so it is fairly easy to place the images and configure Unity's cameras to simulate the actual ones.
+</details>
 
 ### Automated Camera Parameters Setup
+<details>
+<summary>See</summary>
 
-Cameras' setup has been automated via script,
-by completely rewriting in C# the MATLAB logic that was provided.
+  Cameras' setup has been automated via script,
+  by completely rewriting in C# the MATLAB logic that was provided.
+  
+  This enables the scene to be dynamically changed without manual setup,
+  allowing multiple scenes, camera switches, dynamic resolution, and other features to be performed effortlessly.
+  
+  This game, specifically, can move the camera to a different position via gesture,
+  based on real images used for the scene reconstruction.
+  
+  https://github.com/user-attachments/assets/2e7f5e1e-7e9b-49ad-bac0-c1d43142754e
 
-This enables the scene to be dynamically changed without manual setup,
-allowing multiple scenes, camera switches, and other features to be performed effortlessly.
-
-This game, specifically, can move the camera to a different position via gesture,
-based on real images used for the scene reconstruction.
+</details>
 
 ### Simulated Depth Occlusions
+<details>
+<summary>See</summary>
 
-Other than providing collisions to 3D objects,
-the underlying real-world 3D model is able to occlude them based on depth. \
-This is made by using a set of two cameras:
-- A UI camera that only renders the background image.
-- A 3D camera that renders all 3D objects in the scene.
-  Scene models use a custom material,
-  which applies a flat texture representing a cut-out of the background image,
-  rendered by the UI camera. \
-  This makes them perfectly identical to the background image,
-  but still allows for depth occlusions to be taken into account.
+  Other than providing collisions to 3D objects,
+  the underlying real-world 3D model is able to occlude them based on depth. \
+  This is made by using a set of two cameras:
+  - A UI camera that only renders the background image.
+  - A 3D camera that renders all 3D objects in the scene.
+    Scene models use a custom material,
+    which applies a flat texture representing a cut-out of the background image,
+    rendered by the UI camera. \
+    This makes them perfectly identical to the background image,
+    but still allows for depth occlusions to be taken into account.
+  
+  https://github.com/user-attachments/assets/947ee711-25fb-4ea6-81ca-5fce5def13a4
 
+</details>
 
 ## Credits
 
