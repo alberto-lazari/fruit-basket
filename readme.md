@@ -33,7 +33,7 @@ as well as a practical mixed/augmented-reality application.
   Handling the result is simple:
   the longer the vector, the faster the gesture,
   since points are further away from each other in the same period of time (last few frames).
-  
+
   The applied force has three-dimensions though,
   so how to represent it with a two-dimensional gesture on the screen? \
   The [`FruitThrower`](Assets/Scripts/FruitThrower.cs) interprets is as a three-dimensional vector like this:
@@ -56,7 +56,7 @@ as well as a practical mixed/augmented-reality application.
 
   The game scene is a 2D image, but objects are able to interact with an underlying 3D world.
   This has been reconstructed with a photogrammetry software (3DF Zephyr), using the very same photos used as background.
-  
+
   Zephyr is able to export intrinsic and extrinsic parameters of the camera used for the reconstruction,
   so it is fairly easy to place the images and configure Unity's cameras to simulate the actual ones.
 
@@ -68,13 +68,13 @@ as well as a practical mixed/augmented-reality application.
 
   Cameras' setup has been automated via script,
   by completely rewriting in C# the MATLAB logic that was provided.
-  
+
   This enables the scene to be dynamically changed without manual setup,
   allowing multiple scenes, camera switches, dynamic resolution, and other features to be performed effortlessly.
-  
+
   This game, specifically, can move the camera to a different position via gesture,
   based on real images used for the scene reconstruction.
-  
+
   https://github.com/user-attachments/assets/2e7f5e1e-7e9b-49ad-bac0-c1d43142754e
 
 </details>
@@ -93,7 +93,7 @@ as well as a practical mixed/augmented-reality application.
     rendered by the UI camera. \
     This makes them perfectly identical to the background image,
     but still allows for depth occlusions to be taken into account.
-  
+
   https://github.com/user-attachments/assets/947ee711-25fb-4ea6-81ca-5fce5def13a4
 
 </details>
