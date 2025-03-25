@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: Laz
-  productName: Table Basket
+  productName: Fruit Basket
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.084905684, g: 0.07809721, b: 0.07979933, a: 1}
