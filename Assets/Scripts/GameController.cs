@@ -95,14 +95,14 @@ public class GameController : MonoBehaviour
     private void OnGestureEnd()
     {
         m_GesturePoints.Add(MousePosition());
-        if (m_GesturePoints.Count < m_GesturePointsNumber) return;
 
-        List<Vector2> gesturePoints = m_GesturePoints.GetRange(
-            m_GesturePoints.Count - m_GesturePointsNumber,
-            m_GesturePointsNumber
-        );
-        Vector2 last = gesturePoints[gesturePoints.Count - 1];
-        Vector2 first = gesturePoints[0];
+        Vector2 first = m_GesturePoints.Count > m_GesturePointsNumber
+            ? m_GesturePoints[m_GesturePoints.Count - m_GesturePointsNumber]
+            : m_GesturePoints[0];
+        Vector2 last = m_GesturePoints.Count > m_GesturePointsNumber
+            ? m_GesturePoints[m_GesturePoints.Count - 1]
+            // Generate a null gesture if lenght is insufficient
+            : first;
         Vector2 gesture = last - first;
 
         if (m_IsDraggingFruit)
