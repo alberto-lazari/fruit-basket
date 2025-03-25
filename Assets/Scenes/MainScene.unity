@@ -1528,6 +1528,7 @@ MonoBehaviour:
   m_ForceModifier: 15
   m_Torque: 2
   m_SpawnDistance: 20
+  m_SpawnHeight: -5
   m_SpawnTime: 2
 --- !u!1 &2036659889
 GameObject:

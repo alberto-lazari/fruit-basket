@@ -24,14 +24,8 @@ public class GameController : MonoBehaviour
 
     private void Start()
     {
-        if (m_Thrower == null)
-        {
-            Debug.LogError("Thrower is not assigned");
-        }
-        if (m_CameraSetup == null)
-        {
-            Debug.LogError("Camera is not assigned");
-        }
+        if (m_Thrower == null) Debug.LogError("Thrower is not assigned");
+        if (m_CameraSetup == null) Debug.LogError("Camera is not assigned");
     }
 
     private void Update()

@@ -7,6 +7,7 @@ public class FruitThrower : MonoBehaviour
     [SerializeField] private float m_ForceModifier = 15f;
     [SerializeField] private float m_Torque = 2f;
     [SerializeField] private float m_SpawnDistance = 20f;
+    [SerializeField] private float m_SpawnHeight = -5f;
     [SerializeField] private float m_SpawnTime = 2f;
 
     private GameObject m_CurrentFruit;
@@ -30,7 +31,9 @@ public class FruitThrower : MonoBehaviour
 
     private Vector3 FruitPosition()
     {
-        return transform.position + transform.forward * m_SpawnDistance;
+        return transform.position
+            + transform.forward * m_SpawnDistance
+            + transform.up * m_SpawnHeight;
     }
 
     private void AdjustFruitPosition()
